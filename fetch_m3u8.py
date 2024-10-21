@@ -1,67 +1,39 @@
 import sys
-import requests
-from bs4 import BeautifulSoup
+import time
 import re
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 
 def extract_m3u8_url(page_url):
     try:
-        response = requests.get(page_url)
-        response.raise_for_status()  # Check for HTTP errors
+        # Set up Chrome options
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")  # Run in headless mode
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
 
-        soup = BeautifulSoup(response.content, 'html.parser')
-        # Search for all URLs in the page
-        urls = [a['href'] for a in soup.find_all('a', href=True)]
+        # Set up WebDriver
+        driver = webdriver.Chrome(options=chrome_options)
+        driver.get(page_url)
 
-        # Check for m3u8 URLs in the HTML
-        m3u8_urls = [url for url in urls if url.endswith('.m3u8')]
+        # Wait for page to fully load
+        time.sleep(10)  # Adjust this time if necessary
 
-        # Also search inside JS scripts (optional, to catch dynamic cases)
-        script_urls = re.findall(r'https?://[^\s"\']+\.m3u8', response.text)
-        m3u8_urls.extend(script_urls)
+        # Search for m3u8 URLs in page source
+        page_source = driver.page_source
+        m3u8_urls = re.findall(r'https?://[^\s"\']+\.m3u8', page_source)
 
         if m3u8_urls:
             print(f"Found m3u8 URLs:\n{', '.join(m3u8_urls)}")
         else:
             print("No m3u8 URLs found.")
 
-    except requests.RequestException as e:
-        print(f"Error fetching the page: {e}")
+        driver.quit()
 
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python fetch_m3u8.py <webpage_url>")
-        sys.exit(1)
-
-    webpage_url = sys.argv[1]
-    extract_m3u8_url(webpage_url)
-import sys
-import requests
-from bs4 import BeautifulSoup
-import re
-
-def extract_m3u8_url(page_url):
-    try:
-        response = requests.get(page_url)
-        response.raise_for_status()  # Check for HTTP errors
-
-        soup = BeautifulSoup(response.content, 'html.parser')
-        # Search for all URLs in the page
-        urls = [a['href'] for a in soup.find_all('a', href=True)]
-
-        # Check for m3u8 URLs in the HTML
-        m3u8_urls = [url for url in urls if url.endswith('.m3u8')]
-
-        # Also search inside JS scripts (optional, to catch dynamic cases)
-        script_urls = re.findall(r'https?://[^\s"\']+\.m3u8', response.text)
-        m3u8_urls.extend(script_urls)
-
-        if m3u8_urls:
-            print(f"Found m3u8 URLs:\n{', '.join(m3u8_urls)}")
-        else:
-            print("No m3u8 URLs found.")
-
-    except requests.RequestException as e:
-        print(f"Error fetching the page: {e}")
+    except Exception as e:
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
