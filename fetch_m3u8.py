@@ -13,9 +13,10 @@ def extract_m3u8_url(page_url):
         chrome_options.add_argument("--headless")  # Run in headless mode
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.binary_location = "/usr/bin/chromium-browser"  # Specify Chromium binary
 
         # Set up WebDriver
-        driver = webdriver.Chrome(options=chrome_options)
+        driver = webdriver.Chrome(service=Service("/usr/bin/chromedriver"), options=chrome_options)
         driver.get(page_url)
 
         # Wait for page to fully load
