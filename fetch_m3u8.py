@@ -1,16 +1,16 @@
 import sys
-import time
 import re
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 def extract_m3u8_url(page_url):
     try:
         # Set up Chrome options
         chrome_options = Options()
-        chrome_options.add_argument("--headless")  # Run in headless mode
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.binary_location = "/usr/bin/chromium-browser"  # Specify Chromium binary
@@ -19,8 +19,8 @@ def extract_m3u8_url(page_url):
         driver = webdriver.Chrome(service=Service("/usr/bin/chromedriver"), options=chrome_options)
         driver.get(page_url)
 
-        # Wait for page to fully load
-        time.sleep(10)  # Adjust this time if necessary
+        # Wait for a specific element to load (adjust selector as needed)
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
 
         # Search for m3u8 URLs in page source
         page_source = driver.page_source
