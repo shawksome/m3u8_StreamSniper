@@ -2,10 +2,8 @@ name: Fetch m3u8 URL
 
 # Run the workflow periodically every 30 minutes
 on:
-  push:
   schedule:
     - cron: "*/30 * * * *"
-    
   workflow_dispatch:
 
 jobs:
@@ -23,17 +21,24 @@ jobs:
       with:
         python-version: '3.x'
 
-    # Step 3: Install mitmproxy package
-    - name: Install mitmproxy
+    # Step 3: Install required packages (mitmproxy and selenium)
+    - name: Install dependencies
       run: |
-        pip install mitmproxy
+        pip install mitmproxy selenium
 
-    # Step 4: Run mitmproxy to fetch the m3u8 URL
-    - name: Run mitmproxy script to fetch m3u8 URL
+    # Step 4: Install Chrome and ChromeDriver
+    - name: Set up Chrome
+      uses: browser-actions/setup-chrome@v1
+      with:
+        chrome-version: 'latest'
+
+    # Step 5: Run mitmproxy to fetch the m3u8 URL while browsing the website
+    - name: Run mitmproxy and selenium to fetch m3u8 URL
       run: |
-        mitmdump -s fetch_m3u8.py --set block_global=false --set stream_large_bodies=5m
+        mitmdump -s fetch_m3u8.py --set block_global=false --set stream_large_bodies=5m &  # Run mitmproxy in background
+        python run_selenium.py  # Use selenium to visit the website
 
-    # Step 5: Commit and push the latest m3u8 URL to the repository
+    # Step 6: Commit and push the latest m3u8 URL to the repository
     - name: Commit and push the latest m3u8 URL
       run: |
         git config --global user.email "your-email@example.com"
