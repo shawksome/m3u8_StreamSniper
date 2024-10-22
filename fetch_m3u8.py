@@ -12,7 +12,9 @@ def request(flow: http.HTTPFlow) -> None:
 
 def response(flow: http.HTTPFlow) -> None:
     global latest_m3u8_url
-    if latest_m3u8_url:
-        # Save the latest m3u8 URL to a file for future use
-        with open("latest_m3u8.txt", "w") as f:
+    # Ensure the file is created even if no m3u8 URL is captured
+    with open("latest_m3u8.txt", "w") as f:
+        if latest_m3u8_url:
             f.write(latest_m3u8_url)
+        else:
+            f.write("No m3u8 URL found during this run.")
