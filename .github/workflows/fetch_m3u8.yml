@@ -1,0 +1,43 @@
+name: Fetch m3u8 URL
+
+# Run the workflow periodically every 30 minutes
+on:
+  push:
+  schedule:
+    - cron: "*/30 * * * *"
+    
+  workflow_dispatch:
+
+jobs:
+  fetch-m3u8:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the repository
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    # Step 2: Set up Python environment
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    # Step 3: Install mitmproxy package
+    - name: Install mitmproxy
+      run: |
+        pip install mitmproxy
+
+    # Step 4: Run mitmproxy to fetch the m3u8 URL
+    - name: Run mitmproxy script to fetch m3u8 URL
+      run: |
+        mitmdump -s fetch_m3u8.py --set block_global=false --set stream_large_bodies=5m
+
+    # Step 5: Commit and push the latest m3u8 URL to the repository
+    - name: Commit and push the latest m3u8 URL
+      run: |
+        git config --global user.email "your-email@example.com"
+        git config --global user.name "GitHub Actions"
+        git add latest_m3u8.txt
+        git commit -m "Update latest m3u8 URL"
+        git push
