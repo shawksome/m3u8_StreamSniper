@@ -27,24 +27,8 @@ jobs:
       with:
         chrome-version: 'latest'
 
-    # Step to run mitmproxy and selenium together
+    # Run mitmproxy and selenium
     - name: Run mitmproxy and selenium to fetch m3u8 URL
       run: |
         mitmdump -s fetch_m3u8.py --set block_global=false --set stream_large_bodies=5m &  # Run mitmproxy in background
         python run_selenium.py  # Run selenium to visit the website
-
-    # Step to check if 'latest_m3u8.txt' was created
-    - name: Verify m3u8 URL file existence
-      run: |
-        if [ ! -f "latest_m3u8.txt" ]; then
-          echo "File latest_m3u8.txt not found. Creating an empty file."
-          echo "No m3u8 URL found." > latest_m3u8.txt
-        fi
-
-    - name: Commit and push the latest m3u8 URL
-      run: |
-        git config --global user.email "your-email@example.com"
-        git config --global user.name "GitHub Actions"
-        git add latest_m3u8.txt
-        git commit -m "Update latest m3u8 URL"
-        git push
