@@ -19,8 +19,8 @@ const puppeteer = require('puppeteer');
             waitUntil: 'networkidle2',
         });
 
-        // Wait for a few seconds to allow the stream to load
-        await page.waitForTimeout(10000);
+        // Alternative to waitForTimeout: wait for 10 seconds
+        await new Promise(resolve => setTimeout(resolve, 10000)); // Wait for 10 seconds
 
         await browser.close();
     } catch (error) {
