@@ -15,12 +15,21 @@ const puppeteer = require('puppeteer');
         });
 
         // Navigate to the page
+        console.log('Navigating to the URL...');
         await page.goto('https://www.shemaroome.com/all-channels/shemaroo-marathibana', {
             waitUntil: 'networkidle2',
         });
 
-        // Alternative to waitForTimeout: wait for 10 seconds
+        // Allow some time for streams to load
         await new Promise(resolve => setTimeout(resolve, 10000)); // Wait for 10 seconds
+
+        // Check for the network responses
+        const networkResponses = await page.evaluate(() => {
+            return performance.getEntriesByType('resource').map(resource => resource.name);
+        });
+
+        console.log('Network responses:');
+        console.log(networkResponses);
 
         await browser.close();
     } catch (error) {
