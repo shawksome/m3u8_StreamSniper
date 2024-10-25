@@ -1,50 +1,54 @@
-const puppeteer = require('puppeteer');
+//#region Logging Detected M3U8 URLs
+const detectedUrls = [];
 
-(async () => {
-    try {
-        const browser = await puppeteer.launch({ headless: true });
-        const page = await browser.newPage();
+// Function to log detected M3U8 URLs
+function logDetectedM3u8(url) {
+    detectedUrls.push(url);
+    chrome.storage.local.set({ detectedM3u8Urls: detectedUrls }, () => {
+        console.log(`Logged M3U8 URL: ${url}`);
+        notifyUser(url); // Notify user about the new URL
+    });
+}
 
-        // Set a user-agent to mimic a real browser
-        await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36');
+// Function to notify user (this can be customized for better UX)
+function notifyUser(url) {
+    chrome.notifications.create({
+        type: "basic",
+        iconUrl: "icon.png", // Path to your notification icon
+        title: "M3U8 URL Detected",
+        message: `New M3U8 URL: ${url}`,
+        priority: 2
+    });
+}
+//#endregion
 
-        // Intercept network requests
-        await page.setRequestInterception(true);
-        page.on('request', request => {
-            // Log all requests for debugging
-            console.log('Request URL:', request.url());
+//#region Filtering M3U8 URLs
+const userDefinedDomains = ["example.com", "another-example.com"]; // Add user-defined domains here
 
-            // Continue all requests but log the m3u8 requests
-            if (request.url().includes('.m3u8')) {
-                console.log('Captured m3u8 URL:', request.url());
-            }
-            request.continue();
-        });
+// Check if the URL belongs to the user-defined domains
+function isUrlAllowed(url) {
+    return userDefinedDomains.some(domain => url.includes(domain));
+}
+//#endregion
 
-        // Navigate to the page with increased timeout
-        console.log('Navigating to the URL...');
-        await page.goto('https://www.shemaroome.com/all-channels/shemaroo-marathibana', {
-            waitUntil: 'domcontentloaded',
-            timeout: 60000 // Increase timeout to 60 seconds
-        });
+// In your webRequest.onBeforeRequest listener
+chrome.webRequest.onBeforeRequest.addListener(
+    async function(details) {
+        // Your existing logic...
 
-        // Wait for the video element or any element indicating the stream is ready
-        await page.waitForSelector('video', { timeout: 60000 });
+        // Check if the detected URL is an M3U8 and if it is allowed
+        if (snifferUtils.m3u8RegexFilter.test(requestM3u8) && isUrlAllowed(requestM3u8)) {
+            logDetectedM3u8(requestM3u8); // Log the URL
+            await webPageHandleM3u8(tabId, tabObj, requestM3u8); // Existing handling
+        }
+    },
+    networkFilters
+);
 
-        // Allow more time for dynamic loading (30 seconds)
-        console.log('Waiting for additional resources to load...');
-        await new Promise(resolve => setTimeout(resolve, 30000));
-
-        // Check for the network responses after loading
-        const networkResponses = await page.evaluate(() => {
-            return performance.getEntriesByType('resource').map(resource => resource.name);
-        });
-
-        console.log('Network responses:');
-        console.log(networkResponses);
-
-        await browser.close();
-    } catch (error) {
-        console.error('Error:', error);
-    }
-})();
+// Clear logged URLs (can be tied to a UI element)
+function clearLoggedUrls() {
+    detectedUrls.length = 0; // Clear the array
+    chrome.storage.local.remove('detectedM3u8Urls', () => {
+        console.log("Cleared all logged M3U8 URLs.");
+    });
+}
