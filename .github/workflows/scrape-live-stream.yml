@@ -1,0 +1,39 @@
+name: Scrape Live Stream URL
+
+on:
+  schedule:
+    # Run the job every hour (adjust as needed)
+    - cron: '0 * * * *'
+  workflow_dispatch: # Manual trigger option
+  push: # Trigger on code push
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'  # Use a compatible Node.js version
+
+    - name: Install dependencies
+      run: |
+        npm install puppeteer
+
+    - name: Run Puppeteer script
+      run: |
+        node puppeteer-script.js
+
+    - name: Save m3u8 URL to output
+      id: capture-url
+      run: |
+        URL=$(node puppeteer-script.js | grep 'Captured m3u8 URL:' | sed 's/Captured m3u8 URL: //')
+        echo "::set-output name=m3u8_url::$URL"
+      shell: bash
+
+    - name: Display m3u8 URL
+      run: echo "The captured m3u8 URL is: ${{ steps.capture-url.outputs.m3u8_url }}"
