@@ -1,4 +1,3 @@
-// puppeteer-script.js
 const puppeteer = require('puppeteer');
 
 (async () => {
