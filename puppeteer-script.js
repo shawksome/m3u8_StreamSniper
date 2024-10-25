@@ -15,15 +15,14 @@ const puppeteer = require('puppeteer');
             request.continue();
         });
 
-        // Navigate to the Shemaroo Marathi Bana page
+        // Navigate to the page
         await page.goto('https://www.shemaroome.com/all-channels/shemaroo-marathibana', {
             waitUntil: 'networkidle2',
         });
 
-        // Wait for 10 seconds to allow video and network requests to load
+        // Wait for a few seconds to allow the stream to load
         await page.waitForTimeout(10000);
 
-        // Close the browser
         await browser.close();
     } catch (error) {
         console.error('Error:', error);
