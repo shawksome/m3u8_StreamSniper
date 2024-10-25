@@ -11,8 +11,11 @@ const puppeteer = require('puppeteer');
         // Intercept network requests
         await page.setRequestInterception(true);
         page.on('request', request => {
+            // Log all requests for debugging
+            console.log('Request URL:', request.url());
+
             // Continue all requests but log the m3u8 requests
-            if (request.url().includes('playlist.m3u8')) {
+            if (request.url().includes('.m3u8')) {
                 console.log('Captured m3u8 URL:', request.url());
             }
             request.continue();
