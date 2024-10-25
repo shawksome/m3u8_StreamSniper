@@ -28,11 +28,12 @@ const puppeteer = require('puppeteer');
             timeout: 60000 // Increase timeout to 60 seconds
         });
 
-        // Wait for a specific element that indicates the stream is ready
-        await page.waitForSelector('video', { timeout: 60000 }); // Adjust selector as needed
+        // Wait for the video element or any element indicating the stream is ready
+        await page.waitForSelector('video', { timeout: 60000 });
 
-        // Allow some time for streams to load (10 seconds)
-        await new Promise(resolve => setTimeout(resolve, 10000));
+        // Allow more time for dynamic loading (30 seconds)
+        console.log('Waiting for additional resources to load...');
+        await new Promise(resolve => setTimeout(resolve, 30000));
 
         // Check for the network responses after loading
         const networkResponses = await page.evaluate(() => {
