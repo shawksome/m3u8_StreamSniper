@@ -24,7 +24,7 @@ const fs = require('fs');
 
   try {
     // Navigate to the target page
-    await page.goto('https://www.shemaroome.com/all-channels/shemaroo-marathibana/', { waitUntil: 'networkidle2' });
+    await page.goto('https://www.yupptv.com/channels/jai-maharashtra/live', { waitUntil: 'networkidle2' });
     await page.waitForTimeout(10000); // Increase wait time
   } catch (error) {
     console.error('Error navigating to page:', error);
