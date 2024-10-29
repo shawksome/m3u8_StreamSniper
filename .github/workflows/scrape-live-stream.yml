@@ -38,4 +38,4 @@ jobs:
         echo -e "\033[1;33m============================\033[0m"
         cat puppeteer_output.txt
         echo -e "\033[1;33m============================\033[0m"
-        grep 'Found .m3u8 URL:' puppeteer_output.txt
+        grep 'Found .m3u8 URL:' puppeteer_output.txt || echo -e "\033[1;31mExit...\033[0m"
