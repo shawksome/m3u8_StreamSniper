@@ -1,10 +1,12 @@
 name: Scrape Live Stream URL
 
 on:
-  schedule:
-    # Run the job every hour (adjust this as needed)
-    - cron: '0 * * * *'
-  workflow_dispatch: # Allow manual trigger
+  workflow_dispatch:  # Allow manual trigger with URL input
+    inputs:
+      url:
+        description: "The URL to scrape for m3u8 links"
+        required: true
+        default: "https://news.abplive.com/live-tv"
 
 jobs:
   scrape:
@@ -17,16 +19,19 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '16'  # Ensure correct Node.js version
+        node-version: '16'  # Use Node.js version compatible with Puppeteer
 
     - name: Install Puppeteer
       run: npm install puppeteer
 
-    - name: Run Puppeteer script and capture output
+    - name: Run Puppeteer script with dynamic URL
+      env:
+        TARGET_URL: ${{ github.event.inputs.url }}  # Pass URL as environment variable
       run: |
         node puppeteer-script.js | tee puppeteer_output.txt
 
     - name: Display captured .m3u8 URL
       run: |
         cat puppeteer_output.txt
-        grep 'Captured m3u8 URL:' puppeteer_output.txt || echo "No .m3u8 URL found."
+        grep 'Found .m3u8 URL:' puppeteer_output.txt || echo "No .m3u8 URL found."
+
