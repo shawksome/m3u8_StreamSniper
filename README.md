@@ -14,7 +14,7 @@ This tool automates the process of extracting `.m3u8` URLs from live stream page
 
 1. Run the Workflow Manually:
    - Click on "Run workflow."
-   - Input the URL you want to scrape when prompted (e.g., `https://example.com/live-stream`).
+   - Input the URL you want to scrape when prompted (e.g., `https://free2air_example.com/live`).
    - Click "Run workflow" to start the scraping process.
 2. View Results:
    - After a few minutes, the workflow will complete.
