@@ -1,7 +1,7 @@
 # Extract .m3u8 Stream URLs with GitHub Actions
 (*works for Websites without login/authentication)
 
-This tool automates the process of extracting `.m3u8` URLs from live stream pages. It uses Puppeteer in a GitHub Actions workflow to fetch URLs directly from a given page. Use extracted URLs with you preffered HLS Player like VLC.
+This tool automates the process of extracting `.m3u8` URLs from live stream pages. It uses Puppeteer in a GitHub Actions workflow to fetch URLs directly from a given page. Use extracted URLs with your preffered HLS Player(eg. VLC).
 
 ### Run Scrape Workflow Manually
 
