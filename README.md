@@ -6,7 +6,13 @@ This tool automates the process of extracting `.m3u8` URLs from live stream page
 ### Run Scrape Workflow Manually
 
 > You can trigger the [Scrape Live Stream URL workflow](../../actions/workflows/scrape-live-stream.yml) manually from the Actions page.
-#
+
+### Screenshots
+![{05D6F833-1FEB-47F6-99E1-DC0F72F9980F}](https://github.com/user-attachments/assets/85f67166-7f32-4623-9d8e-5d7889156b6b)
+
+![{A2BCFB04-123E-45F4-A211-53C1A8ECD4CD}](https://github.com/user-attachments/assets/d29488fc-9197-4dd7-85d3-d5e567d1e8c1)
+
+
 
 
 
