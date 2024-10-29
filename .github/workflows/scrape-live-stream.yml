@@ -1,7 +1,7 @@
 name: Scrape Live Stream URL
 
 on:
-  workflow_dispatch:  # Allow manual trigger with URL input
+  workflow_dispatch:
     inputs:
       url:
         description: "The URL to scrape for m3u8 links"
@@ -19,19 +19,23 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '16'  # Use Node.js version compatible with Puppeteer
+        node-version: '16'
 
     - name: Install Puppeteer
       run: npm install puppeteer
 
     - name: Run Puppeteer script with dynamic URL
       env:
-        TARGET_URL: ${{ github.event.inputs.url }}  # Pass URL as environment variable
+        TARGET_URL: ${{ github.event.inputs.url }}
       run: |
+        echo -e "\033[1;36m🌀 Running Puppeteer Script... 🌀\033[0m"
         node puppeteer-script.js | tee puppeteer_output.txt
 
-    - name: Display captured .m3u8 URL
+    - name: Display captured .m3u8 URLs
       run: |
+        echo -e "\033[1;33m============================\033[0m"
+        echo -e "\033[1;35m Scrape Results: \033[0m"
+        echo -e "\033[1;33m============================\033[0m"
         cat puppeteer_output.txt
-        grep 'Found .m3u8 URL:' puppeteer_output.txt || echo "No .m3u8 URL found."
-
+        echo -e "\033[1;33m============================\033[0m"
+        grep 'Found .m3u8 URL:' puppeteer_output.txt || echo -e "\033[1;31mNo .m3u8 URL found.\033[0m"
