@@ -34,7 +34,9 @@ const fs = require('fs');
   try {
     console.log("\x1b[34mNavigating to page:\x1b[0m", targetUrl);
     await page.goto(targetUrl, { waitUntil: 'networkidle2' });
-    await page.waitForTimeout(10000); // Adjust wait time if needed
+
+    // Replace waitForTimeout with a delay using setTimeout
+    await new Promise(resolve => setTimeout(resolve, 10000)); // Wait for 10 seconds
   } catch (error) {
     console.error("\x1b[31mError navigating to page:\x1b[0m", error);  // Red text for errors
   }
@@ -47,7 +49,7 @@ const fs = require('fs');
     fs.writeFileSync('puppeteer_output.txt', m3u8Urls.join('\n'));
   } else {
     console.log("\x1b[33m⚠️ No .m3u8 URL found.\x1b[0m");  // Yellow warning for no results
-    fs.writeFileSync('puppeteer_output.txt', 'No .m3u8 URL found.');
+    fs.writeFileSync('puppeteer_output.txt', 'Exit...');
   }
 
   await browser.close();
