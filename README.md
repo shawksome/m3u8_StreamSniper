@@ -28,13 +28,16 @@ This tool automates the process of extracting `.m3u8` URLs from live stream page
   
 ##
 ### Technologies Used
-Puppeteer
+Puppeteer:
+
 Puppeteer is a Node.js library that controls Chromium, often for web scraping and automation. Here, it opens a headless browser (no visible interface) to monitor network requests.
 
-Capturing .m3u8 Links
+Capturing .m3u8 Links:
+
 The script loads a webpage in Puppeteer, intercepts network requests, and logs any URLs ending in .m3u8. Excecutes in GitHub Actions.
 
-GitHub Actions Workflow
+GitHub Actions Workflow:
+
 It runs in GitHub's cloud environment using Node.js, allowing users to trigger the action, specify a URL, and capture .m3u8 links from the site.
 
 #### Important Notes
