@@ -2,12 +2,14 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 
 (async () => {
-  const targetUrl = process.env.TARGET_URL;  // Use environment variable for the URL
+  const targetUrl = process.env.TARGET_URL;
 
   if (!targetUrl) {
-    console.error("No URL provided. Exiting script.");
+    console.error("\x1b[31mNo URL provided. Exiting script.\x1b[0m");  // Red text for error
     process.exit(1);
   }
+
+  console.log("\x1b[34mStarting Puppeteer...\x1b[0m"); // Blue text for startup info
 
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
@@ -20,43 +22,31 @@ const fs = require('fs');
 
   const m3u8Urls = [];
 
-  // Log network responses to capture .m3u8 URLs
+  // Log network responses
   page.on('response', async (response) => {
     const url = response.url();
     if (url.endsWith('.m3u8')) {
       m3u8Urls.push(url);
-      console.log('Found .m3u8 URL:', url);
+      console.log("\x1b[32mFound .m3u8 URL:\x1b[0m", url); // Green text for found URL
     }
   });
 
   try {
-    // Navigate to the target page
+    console.log("\x1b[34mNavigating to page:\x1b[0m", targetUrl);
     await page.goto(targetUrl, { waitUntil: 'networkidle2' });
-    await page.waitForTimeout(10000); // Increase wait time if needed
+    await page.waitForTimeout(10000); // Adjust wait time if needed
   } catch (error) {
-    console.error('Error navigating to page:', error);
+    console.error("\x1b[31mError navigating to page:\x1b[0m", error);  // Red text for errors
   }
 
-  // Capture all network responses for debugging
-  const allResponses = await page.evaluate(() => {
-    return performance.getEntriesByType('resource').map((resource) => ({
-      name: resource.name,
-      initiatorType: resource.initiatorType,
-      responseEnd: resource.responseEnd,
-    }));
-  });
+  console.log("\x1b[34mAll network responses:\x1b[0m", m3u8Urls);
 
-  console.log('All network responses:', allResponses);
-
-  // Write all responses to file for inspection
-  fs.writeFileSync('network_responses.txt', JSON.stringify(allResponses, null, 2));
-
-  // Write the captured m3u8 URLs to file
+  // Save results to file for reference
   if (m3u8Urls.length) {
-    console.log('Total .m3u8 URLs found:', m3u8Urls.length);
+    console.log(`\x1b[32m✅ Total .m3u8 URLs found: ${m3u8Urls.length}\x1b[0m`);
     fs.writeFileSync('puppeteer_output.txt', m3u8Urls.join('\n'));
   } else {
-    console.log('No .m3u8 URL found.');
+    console.log("\x1b[33m⚠️ No .m3u8 URL found.\x1b[0m");  // Yellow warning for no results
     fs.writeFileSync('puppeteer_output.txt', 'No .m3u8 URL found.');
   }
 
