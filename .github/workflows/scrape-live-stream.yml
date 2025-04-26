@@ -6,7 +6,7 @@ on:
       url:
         description: "The URL to scrape for m3u8 links"
         required: true
-        default: "https://news.abplive.com/live-tv"
+        default: "https://hd-auth.skylinewebcams.com/live.m3u8?a=brkpr2jtr3uvvt7asurusi0bh0"
 
 jobs:
   scrape:
